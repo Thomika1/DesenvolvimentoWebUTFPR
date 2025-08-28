@@ -1,24 +1,23 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import './App.css';
+import Chatbot from '@/components/Chatbot';
 
 function App() {
-  const [value, setValue] = useState("")
-
-  const handleChange = (event) =>{
-    setValue(event.target.value)
-  }
+  
   return (
-    <div className='chat-container'>
-      <div className='message-container'>
-        <p>AQUI AS MENSAGENS SERAO EXIBIDAS</p>
-      </div>
-      <div className="input-box">
-        <input type="text" id="user-input" value={value} onChange={handleChange} placeholder='Digite sua dúvida aqui...'></input>
-      </div>
+    <div className='flex flex-col min-h-full w-full max-w-3xl mx-auto px-4'>
+      <header className='sticky top-0 shrink-0 z-20 bg-white'>
+        <div className='flex flex-col h-full w-full gap-1 pt-4 pb-2'>
+          <a>
+            <h1 className='font-urbanist text-[1.65rem] font-semibold'>
+              Chatbot UTFPR
+            </h1>
+          </a>
+        </div>
+      </header>
+      <Chatbot />
     </div>
-  )
+  );
 }
 
 export default App
