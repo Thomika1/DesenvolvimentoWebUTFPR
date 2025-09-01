@@ -1,7 +1,7 @@
 {
-  "name": "front-end",
+  "name": "desenvolvimentowebutfpr",
   "version": "1.0.0",
-  "description": "",
+  "description": "Rep para a disciplina de desenvolvimento web",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
