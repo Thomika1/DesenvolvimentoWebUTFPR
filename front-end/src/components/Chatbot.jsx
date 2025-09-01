@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import ChatMessages from '@/components/ChatMessages'
+import ChatInput from '@/components/ChatInput'
 
 function Chatbot (){
     const [chatId, setChatId] = useState(null);
@@ -10,7 +12,8 @@ function Chatbot (){
             <div className='mt-3 font-urbanist text-primary-blue text-xl font-light space-y-2'>
                 <p>Bem vindo ao chatbot</p>
             </div>
-        
+        <ChatMessages />
+        <ChatInput />
         
     </div>
     );

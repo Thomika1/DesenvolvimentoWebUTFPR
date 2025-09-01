@@ -1,68 +1,75 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@100..900&display=swap')
+layer(base);
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap')
+layer(base);
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@import 'tailwindcss';
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@theme {
+  --font-*: initial;
+  --font-sans: Open Sans, sans-serif;
+  --font-urbanist: Urbanist, sans-serif;
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
+  --color-primary-blue: rgb(146, 179, 202);
+  --color-primary-orange: rgb(243, 195, 177);
+  --color-main-text: rgb(0, 43, 49);
+  --color-error-red: rgb(208, 69, 82);
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
+  --animate-spinner: spinner 1.5s linear infinite;
+  --animate-spinner-delayed: spinner 1.5s linear infinite 0.75s;
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+  @keyframes spinner {
+    0% {
+      transform: scale(0);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0;
+    }
   }
-  a:hover {
-    color: #747bff;
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
   }
-  button {
-    background-color: #f9f9f9;
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+
+@layer base {
+  body, html, #root {
+    @apply text-main-text h-full;
+  }
+
+  ::-webkit-scrollbar {
+    @apply h-4 w-2;
+  }
+
+  ::-webkit-scrollbar:horizontal {
+    @apply h-4 w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent rounded-sm;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary-blue/50 border border-white rounded-sm;
   }
 }
