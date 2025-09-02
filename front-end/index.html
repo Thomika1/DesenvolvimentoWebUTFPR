@@ -39,8 +39,21 @@
         </div>
     </div>
 
-    <div id="chat-page" class="d-none">
+    <div id="chat-page" class="d-none d-flex flex-column min-vh-100 col-12">
 
+        <div class="flex-grow-1 overflow-auto p-3">
+        </div>
+
+        <div class="container-fluid mt-auto p-3">
+            <div class="row">
+                <div class="col-6 mx-auto">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Digite uma mensagem...">
+                        <button class="btn btn-primary" type="button">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="script.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
