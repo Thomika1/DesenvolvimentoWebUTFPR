@@ -1,0 +1,8 @@
+.animated-color {
+  transition:  background-color 0.3s ease-in-out;
+}
+
+.animated-color:hover {
+  
+  background-color: #ffffff !important; 
+}

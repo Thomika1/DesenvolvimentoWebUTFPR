@@ -39,10 +39,25 @@
         </div>
     </div>
 
-    <div id="chat-page" class="d-none d-flex flex-column min-vh-100 col-12">
+    <div id="chat-page" class="d-none d-flex flex-column min-vh-100 col-12 p-4">
 
-        <div class="flex-grow-1 overflow-auto p-3 d-flex justify-content-center">
+        <div class="row">
+            
+        <div class="d-flex align-items-center justify-content-between p-1">
+            
+            <button class="btn btn-outline border-0 p-2 ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+                </svg>
+            </button>
+            
+        </div>
+    </div>
+        <div class="flex-grow-1 overflow-auto p-1 d-flex justify-content-center">
             <div class="card p-4 shadow-sm w-100">
+
+                
+
 
             </div>
         </div>
@@ -52,8 +67,31 @@
                 <div class="col-6 mx-auto">
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Digite uma mensagem...">
-                        <button class="btn btn-primary" type="button">Enviar</button>
+                        <button class="btn btn-primary bg-warning text-dark border-0 animated-color" type="button">Enviar</button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample"
+            aria-labelledby="offcanvasExampleLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasExampleLabel">Opções do Chat</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div>
+                    Algumas opções aqui.
+                </div>
+                <div class="dropdown mt-3">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        Configurações
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Ação</a></li>
+                        <li><a class="dropdown-item" href="#">Outra ação</a></li>
+                        <li><a class="dropdown-item" href="#">Algo mais aqui</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
