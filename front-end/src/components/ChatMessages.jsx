@@ -1,5 +1,3 @@
-// src/components/ChatMessages.jsx
-
 import React, { useRef, useEffect } from 'react';
 import Spinner from './Spinner';
 
