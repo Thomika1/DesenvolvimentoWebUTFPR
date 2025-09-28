@@ -11,7 +11,6 @@ const ChatInput = ({ onSendMessage, theme }) => {
     }
   };
 
-  // Cores do input conforme o tema
   const inputBg =
     theme === 'dark'
       ? 'bg-[#232324] text-[#E3E3E3] placeholder:text-gray-400 border-gray-700'
