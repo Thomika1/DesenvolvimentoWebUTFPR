@@ -7,7 +7,7 @@ function ChatInput({ newMessage, isLoading, setNewMessage, submitNewMessage }) {
   function handleKeyDown(e) {
     if(e.keyCode === 13 && !e.shiftKey && !isLoading) {
       e.preventDefault();
-      submitNewMessage();
+      submitNewMessage(); // Chama a função ao pressionar Enter
     }
   }
   
@@ -20,12 +20,12 @@ function ChatInput({ newMessage, isLoading, setNewMessage, submitNewMessage }) {
             ref={textareaRef}
             rows='1'
             value={newMessage}
-            //onChange={e => setNewMessage(e.target.value)}
+            onChange={e => setNewMessage(e.target.value)} // [3] Descomente o onChange
             onKeyDown={handleKeyDown}
           />
           <button
             className='absolute top-1/2 -translate-y-1/2 right-3 p-1 rounded-md hover:bg-primary-blue/20'
-            //onClick={submitNewMessage}
+            onClick={submitNewMessage}
           >
             <img src={sendIcon} alt='send' />
           </button>

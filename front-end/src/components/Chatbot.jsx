@@ -6,10 +6,45 @@ import ChatInput from '@/components/ChatInput';
 
 function Chatbot() {
   const [chatId, setChatId] = useState(null);
-  const [messages, setMessages] = useImmer([]);
+  const [messages, setMessages] = useImmer([]); // [1] useImmer é ótimo para isso!
   const [newMessage, setNewMessage] = useState('');
 
   const isLoading = messages.length && messages[messages.length - 1].loading;
+
+  // --- NOVA FUNÇÃO DE SUBMISSÃO ---
+  const submitNewMessage = () => {
+    if (!newMessage.trim() || isLoading) return;
+
+    // 1. Adiciona a mensagem do usuário (imutabilidade com Immer)
+    setMessages(draft => {
+      draft.push({
+        role: 'user',
+        content: newMessage.trim(),
+        loading: false,
+        error: false,
+      });
+    });
+
+    // 2. Limpa o input
+    setNewMessage('');
+
+    // 3. Simula a resposta da IA com um pequeno atraso
+    setTimeout(() => {
+      const mockResponse = "🤖 Olá! Esta é uma resposta mockada da IA. O envio foi um sucesso!";
+
+      // Adiciona a resposta do bot após o atraso
+      setMessages(draft => {
+        draft.push({
+          role: 'assistant',
+          content: mockResponse,
+          loading: false,
+          error: false,
+        });
+      });
+    }, 1000); // 1 segundo de atraso
+  };
+
+
 
 
   return (
@@ -26,8 +61,10 @@ function Chatbot() {
         isLoading={isLoading}
       />
       <ChatInput
-        apsidjasipdnasidnaspidnasda
-        //submitNewMessage={submitNewMessage}
+        newMessage={newMessage}
+        isLoading={isLoading}
+        setNewMessage={setNewMessage}
+        submitNewMessage={submitNewMessage}
       />
     </div>
   );
