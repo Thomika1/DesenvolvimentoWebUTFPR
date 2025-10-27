@@ -170,3 +170,38 @@ Como alternativa ao streaming via HTTP, WebSockets oferecem uma comunicação bi
     1.  O cliente (React) se conecta a `ws://your-api.com/chat/ws/{conversation_id}?token=...`.
     2.  O cliente envia mensagens para o servidor no formato JSON: `{"query": "Minha pergunta..."}`.
     3.  O servidor processa a query com o pipeline RAG e envia a resposta (ou tokens de resposta) de volta pela mesma conexão.
+
+---
+
+## Executando o servidor (início rápido)
+
+A partir do diretório `back-end`, ative seu virtualenv e execute o servidor com uvicorn. Exemplo (shell fish):
+
+```fish
+# ative seu ambiente, se tiver um
+source env/bin/activate.fish
+# execute uvicorn
+env/bin/python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Abra a documentação interativa em http://localhost:8000/docs
+
+### Requisições de exemplo
+
+Registrar:
+
+```bash
+curl -X POST "http://localhost:8000/register" -H "Content-Type: application/json" -d '{"username": "alice", "email": "alice@example.com", "password": "secret"}'
+```
+
+Obter token usando fluxo de senha OAuth2:
+
+```bash
+curl -X POST "http://localhost:8000/token" -d "username=alice&password=secret" -H "Content-Type: application/x-www-form-urlencoded"
+```
+
+Chamar endpoint protegido `/chat` (substitua <TOKEN>):
+
+```bash
+curl -X POST "http://localhost:8000/chat" -H "Authorization: Bearer <TOKEN>" -H "Content-Type: application/json" -d '{"message":"hello"}'
+```
