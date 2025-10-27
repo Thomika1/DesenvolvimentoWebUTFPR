@@ -17,7 +17,7 @@ except Exception as e:
 SECRET_KEY = os.getenv("SECRET_KEY", "change-me-in-production")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def get_password_hash(password: str) -> str:

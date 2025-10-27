@@ -1,6 +1,19 @@
-# API Endpoints para Chatbot RAG com Autenticação
+# API do Projeto de Chatbot com Autenticação
 
-Este documento descreve a API RESTful para o projeto de chatbot RAG, com um backend em FastAPI e frontend em React. A API lida com autenticação de usuários, gerenciamento de conversas e a interação principal com o chatbot.
+Este documento descreve a API RESTful do projeto, implementada com FastAPI no backend e React no frontend. Atualmente, o projeto possui um sistema de autenticação completo e seguro, com endpoints protegidos e tokens JWT.
+
+## Estado Atual do Projeto
+
+### Implementado ✅
+- Sistema completo de autenticação com JWT
+- Hash seguro de senhas com PBKDF2
+- Endpoints protegidos com OAuth2
+- Documentação interativa (Swagger/OpenAPI)
+
+### Em Desenvolvimento 🚧
+- Sistema de conversas e mensagens (em breve)
+- Implementação do RAG (próximas iterações)
+- Integração com base de conhecimento (próximas iterações)
 
 ---
 
@@ -15,6 +28,7 @@ Endpoints públicos para registro e login de usuários. O login retorna um token
 -   **Corpo da Requisição**:
     ```json
     {
+      "username": "user123",
       "email": "user@example.com",
       "password": "yourstrongpassword"
     }
@@ -23,8 +37,8 @@ Endpoints públicos para registro e login de usuários. O login retorna um token
     ```json
     {
       "id": "user_uuid_123",
-      "email": "user@example.com",
-      "message": "User created successfully"
+      "username": "user123",
+      "email": "user@example.com"
     }
     ```
 
@@ -34,7 +48,7 @@ Endpoints públicos para registro e login de usuários. O login retorna um token
 -   **Proteção**: Nenhuma (Público).
 -   **Corpo da Requisição** (usando `OAuth2PasswordRequestForm` do FastAPI):
     ```bash
-    username=user@example.com&password=yourstrongpassword
+    username=user123&password=yourstrongpassword
     ```
 -   **Resposta de Sucesso (`200 OK`)**:
     ```json
@@ -46,11 +60,11 @@ Endpoints públicos para registro e login de usuários. O login retorna um token
 
 ---
 
-## 2. Usuários (`/users`)
+## 2. Endpoints Protegidos
 
-Endpoints protegidos para gerenciar os dados do usuário logado.
+Endpoints que requerem autenticação via token JWT.
 
-### `GET /users/me`
+### `GET /me`
 
 -   **Descrição**: Retorna os detalhes do usuário atualmente autenticado.
 -   **Proteção**: Requer Autenticação (Token `Bearer`).
@@ -59,149 +73,172 @@ Endpoints protegidos para gerenciar os dados do usuário logado.
     ```json
     {
       "id": "user_uuid_123",
+      "username": "user123",
       "email": "user@example.com"
     }
     ```
 
----
+### `POST /chat`
 
-## 3. Conversas (`/conversations`)
-
-Endpoints para criar, listar e deletar as conversas de um usuário.
-
-### `POST /conversations`
-
--   **Descrição**: Inicia uma nova conversa (chat) para o usuário logado.
--   **Proteção**: Requer Autenticação.
+-   **Descrição**: Endpoint básico de chat (versão temporária sem RAG).
+-   **Proteção**: Requer Autenticação (Token `Bearer`).
 -   **Corpo da Requisição**:
     ```json
     {
-      "title": "Minha Primeira Conversa"
-    }
-    ```
--   **Resposta de Sucesso (`201 Created`)**:
-    ```json
-    {
-      "id": "conv_uuid_abc",
-      "user_id": "user_uuid_123",
-      "title": "Minha Primeira Conversa",
-      "created_at": "2025-10-19T19:30:00Z"
-    }
-    ```
-
-### `GET /conversations`
-
--   **Descrição**: Lista todas as conversas do usuário autenticado.
--   **Proteção**: Requer Autenticação.
--   **Corpo da Requisição**: Nenhum.
--   **Resposta de Sucesso (`200 OK`)**:
-    ```json
-    [
-      {
-        "id": "conv_uuid_abc",
-        "title": "Minha Primeira Conversa",
-        "created_at": "2025-10-19T19:30:00Z"
-      },
-      {
-        "id": "conv_uuid_def",
-        "title": "Dúvidas sobre Go",
-        "created_at": "2025-10-18T15:00:00Z"
-      }
-    ]
-    ```
-
-### `GET /conversations/{conversation_id}`
-
--   **Descrição**: Recupera uma conversa específica e todo o seu histórico de mensagens.
--   **Proteção**: Requer Autenticação. O backend deve validar que a conversa pertence ao usuário que fez a requisição.
--   **Parâmetros de URL**:
-    -   `conversation_id` (string): O ID da conversa.
--   **Resposta de Sucesso (`200 OK`)**:
-    ```json
-    {
-      "id": "conv_uuid_abc",
-      "title": "Minha Primeira Conversa",
-      "messages": [
-        { "id": "msg_1", "role": "user", "content": "Olá, tudo bem?" },
-        { "id": "msg_2", "role": "assistant", "content": "Olá! Tudo ótimo. Como posso ajudar?" }
-      ]
-    }
-    ```
-
-### `DELETE /conversations/{conversation_id}`
-
--   **Descrição**: Apaga uma conversa e todo o seu histórico de mensagens.
--   **Proteção**: Requer Autenticação.
--   **Parâmetros de URL**:
-    -   `conversation_id` (string): O ID da conversa a ser deletada.
--   **Resposta de Sucesso (`204 No Content`)**.
-
----
-
-## 4. Interação com o Chat (`/chat`)
-
-Endpoint principal para a funcionalidade do chatbot.
-
-### `POST /chat/stream`
-
--   **Descrição**: Envia uma mensagem do usuário para uma conversa específica e recebe a resposta do modelo RAG em tempo real (streaming).
--   **Proteção**: Requer Autenticação.
--   **Corpo da Requisição**:
-    ```json
-    {
-      "conversation_id": "conv_uuid_abc",
-      "query": "Como funciona o RAG em chatbots?"
+      "message": "Olá, tudo bem?"
     }
     ```
 -   **Resposta de Sucesso (`200 OK`)**:
-    -   Um `StreamingResponse` com `Content-Type: text/event-stream`. O frontend em React consome esses eventos para renderizar a resposta de forma incremental.
+    ```json
+    {
+      "reply": "Echo (user123): Olá, tudo bem?"
+    }
+    ```
+
+### `GET /health`
+
+-   **Descrição**: Verifica o status da API.
+-   **Proteção**: Nenhuma (Público).
+-   **Resposta de Sucesso (`200 OK`)**:
+    ```json
+    {
+      "status": "ok"
+    }
+    ```
 
 ---
 
-## 5. (Opcional) Abordagem com WebSocket
+## TODO List 📋
 
-Como alternativa ao streaming via HTTP, WebSockets oferecem uma comunicação bidirecional de baixa latência, ideal para aplicações de chat.
+### Modelos e Banco de Dados
+- [ ] **Conversation Model**
+  ```python
+  class Conversation:
+      id: UUID
+      user_id: UUID
+      title: str
+      created_at: datetime
+  ```
+- [ ] **Message Model**
+  ```python
+  class Message:
+      id: UUID
+      conversation_id: UUID
+      role: str  # "user" ou "assistant"
+      content: str
+      created_at: datetime
+  ```
+- [ ] Adicionar migrations para novos modelos
+- [ ] Integrar com configuração do banco de dados
 
-### `WS /chat/ws/{conversation_id}`
+### Endpoints de Conversas
+- [ ] `POST /conversations`
+  - Criar nova conversa
+  - Validar dados de entrada
+  - Vincular ao usuário atual
+- [ ] `GET /conversations`
+  - Listar conversas do usuário
+  - Adicionar paginação
+  - Ordenar por data
+- [ ] `GET /conversations/{conversation_id}`
+  - Validar propriedade da conversa
+  - Incluir mensagens da conversa
+- [ ] `DELETE /conversations/{conversation_id}`
+  - Validar propriedade
+  - Deletar mensagens em cascata
 
--   **Descrição**: Estabelece uma conexão WebSocket para uma conversa específica, permitindo a troca de mensagens em tempo real.
--   **Proteção**: A autenticação deve ser feita durante o handshake da conexão (por exemplo, enviando o token como um parâmetro de query).
--   **Fluxo de Comunicação**:
-    1.  O cliente (React) se conecta a `ws://your-api.com/chat/ws/{conversation_id}?token=...`.
-    2.  O cliente envia mensagens para o servidor no formato JSON: `{"query": "Minha pergunta..."}`.
-    3.  O servidor processa a query com o pipeline RAG e envia a resposta (ou tokens de resposta) de volta pela mesma conexão.
+### Sistema de Chat
+- [ ] Modificar endpoint `/chat` atual
+  - Salvar mensagens no banco
+  - Vincular à conversa atual
+- [ ] Implementar `/chat/stream`
+  - Resposta em tempo real
+  - Tratamento de erros de streaming
+- [ ] (Opcional) Implementar WebSocket
+
+### Segurança e Autenticação
+- [ ] Validação de senha
+  - Mínimo 8 caracteres
+  - Pelo menos 1 número
+  - Pelo menos 1 caractere especial
+- [ ] Implementar refresh tokens
+- [ ] Rate limiting nos endpoints
+- [ ] Sistema de recuperação de senha
+
+### Documentação
+- [ ] Adicionar docstrings para o Swagger
+- [ ] Documentar códigos de erro
+- [ ] Atualizar exemplos de requisição
+- [ ] Documentar estrutura do banco
+
+### Testes
+- [ ] Testes unitários para models
+- [ ] Testes de integração para endpoints
+- [ ] Testes de autenticação
+- [ ] Testes de validação de dados
+
+### Próximas Iterações
+- [ ] Implementação do RAG
+  - Vetorização de documentos
+  - Sistema de recuperação
+  - Integração com LLM
+- [ ] WebSocket para chat em tempo real
+- [ ] Sistema de notificações
 
 ---
 
-## Executando o servidor (início rápido)
+## Executando o Projeto
 
-A partir do diretório `back-end`, ative seu virtualenv e execute o servidor com uvicorn. Exemplo (shell fish):
+### Pré-requisitos
+- Python 3.8+
+- pip (gerenciador de pacotes Python)
+- Ambiente virtual (recomendado)
 
-```fish
-# ative seu ambiente, se tiver um
-source env/bin/activate.fish
-# execute uvicorn
-env/bin/python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
+### Instalação
 
-Abra a documentação interativa em http://localhost:8000/docs
-
-### Requisições de exemplo
-
-Registrar:
-
+1. Clone o repositório e acesse a pasta do backend:
 ```bash
-curl -X POST "http://localhost:8000/register" -H "Content-Type: application/json" -d '{"username": "alice", "email": "alice@example.com", "password": "secret"}'
+cd back-end
 ```
 
-Obter token usando fluxo de senha OAuth2:
-
+2. Instale as dependências:
 ```bash
-curl -X POST "http://localhost:8000/token" -d "username=alice&password=secret" -H "Content-Type: application/x-www-form-urlencoded"
+pip install -r requirements.txt
 ```
 
-Chamar endpoint protegido `/chat` (substitua <TOKEN>):
-
+3. Inicie o servidor:
 ```bash
-curl -X POST "http://localhost:8000/chat" -H "Authorization: Bearer <TOKEN>" -H "Content-Type: application/json" -d '{"message":"hello"}'
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
+
+### Testando a API
+
+1. Registre um novo usuário:
+```bash
+curl -X POST "http://localhost:8000/auth/register" -H "Content-Type: application/json" -d '{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "testpass123"
+}'
+```
+
+2. Faça login para obter o token:
+```bash
+curl -X POST "http://localhost:8000/auth/login" -d "username=testuser&password=testpass123" -H "Content-Type: application/x-www-form-urlencoded"
+```
+
+3. Use o token para acessar endpoints protegidos:
+```bash
+curl -X GET "http://localhost:8000/me" -H "Authorization: Bearer SEU_TOKEN_AQUI"
+```
+
+### Documentação Interativa
+
+A documentação interativa da API (Swagger/OpenAPI) está disponível em:
+http://localhost:8000/docs
+
+Esta interface permite:
+- Visualizar todos os endpoints disponíveis
+- Testar as requisições diretamente no navegador
+- Ver os modelos de dados e respostas
+- Autenticar-se para testar endpoints protegidos

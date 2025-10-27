@@ -16,7 +16,7 @@ def startup_event():
     init_db()
 
 
-@router.post("/register", response_model=schemas.UserOut)
+@router.post("/auth/register", response_model=schemas.UserOut)
 def register(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
     if crud.get_user_by_username(db, user_in.username):
         raise HTTPException(status_code=400, detail="Username already registered")
@@ -26,7 +26,7 @@ def register(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
     return user
 
 
-@router.post("/token", response_model=schemas.Token)
+@router.post("/auth/login", response_model=schemas.Token)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = crud.authenticate_user(db, form_data.username, form_data.password)
     if not user:
