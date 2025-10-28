@@ -1,6 +1,9 @@
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+import os
+import httpx
 
 from . import schemas, crud
 from .db import get_db, init_db
@@ -42,8 +45,37 @@ def read_me(current_user=Depends(get_current_user)):
 
 
 @router.post("/chat", response_model=schemas.ChatResponse)
-def chat_endpoint(req: schemas.ChatRequest, current_user=Depends(get_current_user)):
-    reply = f"Echo ({current_user.username}): {req.message}"
+async def chat_endpoint(req: schemas.ChatRequest, current_user=Depends(get_current_user)):
+    # Prepare Groq API call
+    GROQ_API_URL = os.getenv("GROQ_API_URL", "https://api.groq.com/openai/v1/chat/completions")
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+    if not GROQ_API_KEY:
+        raise HTTPException(status_code=500, detail="Groq API key not configured")
+
+    # Format messages for Groq (user message only)
+    messages = [
+        {"role": "user", "content": req.message}
+    ]
+    body = {
+        "model": "llama-3-8b-instant",  # You can change to another Groq-supported model
+        "messages": messages,
+        "max_tokens": 512,
+        "temperature": 0.7,
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+    }
+    async with httpx.AsyncClient() as client:
+        groq_resp = await client.post(GROQ_API_URL, json=body, headers=headers)
+    if groq_resp.status_code != 200:
+        raise HTTPException(status_code=502, detail=f"Groq API error: {groq_resp.text}")
+    groq_data = groq_resp.json()
+    # Extract reply from Groq response
+    try:
+        reply = groq_data["choices"][0]["message"]["content"]
+    except Exception:
+        reply = "[Error: Unexpected Groq response format]"
     return schemas.ChatResponse(reply=reply)
 
 

@@ -11,6 +11,10 @@ import binascii
 import secrets
 from typing import Optional
 
+from dotenv import load_dotenv
+load_dotenv()
+
+import httpx
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -27,7 +31,7 @@ except Exception as e:
 	) from e
 
 DATABASE_URL = os.getenv(
-	"DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/postgres"
+	"DATABASE_URL", "postgresql://postgres:1234@localhost:5432/postgres"
 )
 
 SECRET_KEY = os.getenv("SECRET_KEY", "change-me-in-production")
@@ -122,6 +126,8 @@ class UserOut(BaseModel):
 	class Config:
 		orm_mode = True
 
+class ChatResponse(BaseModel):
+    reply: str
 
 class Token(BaseModel):
 	access_token: str
@@ -194,10 +200,38 @@ def read_me(current_user: User = Depends(get_current_user)):
 
 
 @app.post("/chat", response_model=ChatResponse)
-def chat_endpoint(req: ChatRequest, current_user: User = Depends(get_current_user)):
-	# Placeholder chatbot logic: echo back the message. Replace with real bot integration.
-	reply = f"Echo ({current_user.username}): {req.message}"
-	return ChatResponse(reply=reply)
+async def chat_endpoint(req: ChatRequest, current_user=Depends(get_current_user)):
+    # Prepare Groq API call
+    GROQ_API_URL = os.getenv("GROQ_API_URL", "https://api.groq.com/openai/v1/chat/completions")
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+    if not GROQ_API_KEY:
+        raise HTTPException(status_code=500, detail="Groq API key not configured")
+
+    # Format messages for Groq (user message only)
+    messages = [
+        {"role": "user", "content": req.message}
+    ]
+    body = {
+        "model": "llama-3.1-8b-instant",  # You can change to another Groq-supported model
+        "messages": messages,
+        "max_tokens": 512,
+        "temperature": 0.7,
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+    }
+    async with httpx.AsyncClient() as client:
+        groq_resp = await client.post(GROQ_API_URL, json=body, headers=headers)
+    if groq_resp.status_code != 200:
+        raise HTTPException(status_code=502, detail=f"Groq API error: {groq_resp.text}")
+    groq_data = groq_resp.json()
+    # Extract reply from Groq response
+    try:
+        reply = groq_data["choices"][0]["message"]["content"]
+    except Exception:
+        reply = "[Error: Unexpected Groq response format]"
+    return ChatResponse(reply=reply)
 
 
 @app.get("/health")
