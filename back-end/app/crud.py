@@ -27,3 +27,45 @@ def authenticate_user(db: Session, username: str, password: str):
     if not verify_password(password, user.hashed_password):
         return None
     return user
+
+
+# ===== Chat Operations =====
+
+def create_chat(db: Session, user_id: int, title: str = None):
+    """Cria um novo chat para um usuário."""
+    chat = models.Chat(user_id=user_id, title=title)
+    db.add(chat)
+    db.commit()
+    db.refresh(chat)
+    return chat
+
+
+def get_chat(db: Session, chat_id: int, user_id: int):
+    """Recupera um chat específico se pertencer ao usuário."""
+    return db.query(models.Chat).filter(
+        models.Chat.id == chat_id,
+        models.Chat.user_id == user_id
+    ).first()
+
+
+def get_user_chats(db: Session, user_id: int):
+    """Retorna todos os chats de um usuário."""
+    return db.query(models.Chat).filter(
+        models.Chat.user_id == user_id
+    ).order_by(models.Chat.updated_at.desc()).all()
+
+
+def add_message(db: Session, chat_id: int, role: str, content: str):
+    """Adiciona uma mensagem a um chat."""
+    message = models.Message(chat_id=chat_id, role=role, content=content)
+    db.add(message)
+    db.commit()
+    db.refresh(message)
+    return message
+
+
+def get_chat_messages(db: Session, chat_id: int):
+    """Retorna todas as mensagens de um chat."""
+    return db.query(models.Message).filter(
+        models.Message.chat_id == chat_id
+    ).order_by(models.Message.created_at.asc()).all()

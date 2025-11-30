@@ -1,4 +1,6 @@
 from pydantic import BaseModel, EmailStr
+from typing import List, Optional
+from datetime import datetime
 
 
 class UserCreate(BaseModel):
@@ -21,9 +23,33 @@ class Token(BaseModel):
     token_type: str
 
 
+class MessageOut(BaseModel):
+    id: int
+    role: str
+    content: str
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class ChatOut(BaseModel):
+    id: int
+    title: Optional[str]
+    created_at: datetime
+    updated_at: datetime
+    messages: List[MessageOut]
+
+    class Config:
+        orm_mode = True
+
+
 class ChatRequest(BaseModel):
     message: str
+    chat_id: Optional[int] = None  # Se None, cria novo chat
 
 
 class ChatResponse(BaseModel):
+    chat_id: int
     reply: str
+    message_id: int
