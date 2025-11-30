@@ -4,6 +4,11 @@ from app.main import app
 
 # This file intentionally minimal so that uvicorn can import `main:app`.
 import os
+from dotenv import load_dotenv
+
+# Carregar variáveis de ambiente do .env
+load_dotenv()
+
 import datetime
 import hashlib
 import hmac
@@ -120,7 +125,7 @@ class UserOut(BaseModel):
 	email: EmailStr
 
 	class Config:
-		orm_mode = True
+		from_attributes = True
 
 
 class Token(BaseModel):
@@ -195,9 +200,52 @@ def read_me(current_user: User = Depends(get_current_user)):
 
 @app.post("/chat", response_model=ChatResponse)
 def chat_endpoint(req: ChatRequest, current_user: User = Depends(get_current_user)):
-	# Placeholder chatbot logic: echo back the message. Replace with real bot integration.
-	reply = f"Echo ({current_user.username}): {req.message}"
-	return ChatResponse(reply=reply)
+	import requests
+	
+	groq_api_key = os.getenv("GROQ_API_KEY")
+	if not groq_api_key:
+		raise HTTPException(status_code=500, detail="Groq API key not configured")
+	
+	try:
+		response = requests.post(
+			"https://api.groq.com/openai/v1/chat/completions",
+			headers={
+				"Authorization": f"Bearer {groq_api_key}",
+				"Content-Type": "application/json",
+			},
+			json={
+				"model": "llama-3.1-8b-instant",
+				"messages": [{"role": "user", "content": req.message}],
+				"max_tokens": 512,
+				"temperature": 0.7,
+			},
+			timeout=30
+		)
+		
+		if not response.ok:
+			error_detail = response.text
+			try:
+				error_data = response.json()
+				error_detail = error_data.get("error", {}).get("message", error_detail)
+			except:
+				pass
+			print(f"Groq API Error: {response.status_code} - {error_detail}")
+			raise HTTPException(status_code=400, detail=f"Groq API error: {error_detail}")
+		
+		data = response.json()
+		reply = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+		
+		if not reply:
+			raise HTTPException(status_code=500, detail="Empty response from Groq API")
+		
+		return ChatResponse(reply=reply)
+	
+	except requests.RequestException as e:
+		print(f"Request Error: {str(e)}")
+		raise HTTPException(status_code=500, detail=f"Failed to connect to Groq API: {str(e)}")
+	except Exception as e:
+		print(f"Unexpected Error: {str(e)}")
+		raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
 
 @app.get("/health")

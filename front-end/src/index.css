@@ -17,6 +17,7 @@ layer(base);
 
   --animate-spinner: spinner 1.5s linear infinite;
   --animate-spinner-delayed: spinner 1.5s linear infinite 0.75s;
+  --animate-fadeIn: fadeIn 0.3s ease-in;
 
   @keyframes spinner {
     0% {
@@ -26,6 +27,17 @@ layer(base);
     100% {
       transform: scale(1);
       opacity: 0;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 }

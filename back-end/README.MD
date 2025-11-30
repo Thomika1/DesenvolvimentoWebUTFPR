@@ -242,3 +242,72 @@ Esta interface permite:
 - Testar as requisições diretamente no navegador
 - Ver os modelos de dados e respostas
 - Autenticar-se para testar endpoints protegidos
+
+---
+
+## Rodando o Projeto Completo (Backend + Frontend)
+
+### 1. Configurando o Ambiente
+
+#### Backend (Python + FastAPI)
+1. Crie um ambiente virtual Python:
+```bash
+cd back-end
+python -m venv env
+```
+
+2. Ative o ambiente virtual:
+```bash
+# No Windows:
+.\env\Scripts\activate
+# No Linux/Mac:
+source env/bin/activate
+```
+
+3. Instale as dependências:
+```bash
+pip install -r requirements.txt
+```
+
+#### Frontend (React + Vite)
+1. Instale as dependências do Node.js:
+```bash
+cd ../front-end
+npm install
+```
+
+### 2. Iniciando os Serviços
+
+1. Inicie o banco de dados PostgreSQL (requer Docker):
+```bash
+cd ../back-end
+docker-compose up -d
+```
+
+2. Em um novo terminal, inicie o backend:
+```bash
+# Certifique-se de estar na pasta back-end com o ambiente virtual ativado
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+3. Em outro terminal, inicie o frontend:
+```bash
+cd ../front-end
+npm run dev
+```
+
+### 3. Acessando o Projeto
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:8000
+- Documentação API: http://localhost:8000/docs
+- Banco de dados: localhost:5432 (PostgreSQL)
+
+### 4. Credenciais Padrão
+
+#### Banco de Dados (PostgreSQL)
+- Host: localhost
+- Porta: 5432
+- Usuário: postgres
+- Senha: 1234
+- Banco: postgres
