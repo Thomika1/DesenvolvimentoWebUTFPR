@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import './index.css'
 import { ThemeProvider } from './ThemeContext'
 import Home from './pages/Home'
@@ -10,11 +10,13 @@ import Footer from './components/Footer'
 import Navbar from './components/Navbar'
 import { useState } from 'react'
 import { useTheme } from './ThemeContext'
+import { setToken } from './api'
 
 function Root() {
   const [user, setUser] = useState(null)
   const { theme } = useTheme()
   const location = useLocation()
+  const navigate = useNavigate()
   
   const bgClass = theme === 'dark'
     ? 'bg-[#1E1F20] text-[#E3E3E3]'
@@ -22,6 +24,8 @@ function Root() {
 
   const handleLogout = () => {
     setUser(null)
+    setToken(null)  // Limpar token do localStorage
+    navigate('/')   // Redirecionar para home
   }
 
   const handleLogin = (userData) => {

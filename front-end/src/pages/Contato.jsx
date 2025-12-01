@@ -37,7 +37,7 @@ export default function Contato() {
                 github_name: data.name || user.name,
                 avatar_url: data.avatar_url,
                 profile_url: data.html_url,
-                bio: data.bio || 'Desenvolvedor',
+                bio: 'Desenvolvedor',
                 company: data.company || '',
                 location: data.location || ''
               };
@@ -96,7 +96,7 @@ export default function Contato() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {developers.map((dev, index) => (
               <div
                 key={index}

@@ -95,7 +95,7 @@ export default function Home() {
             className={`${buttonClass} font-bold py-3 sm:py-4 px-8 sm:px-10 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-105 text-base sm:text-lg`}
             onClick={() => navigate("/chat")}
           >
-            Comece Agora
+            Pergunte sobre o Vestibular
           </button>
         </div>
       </div>

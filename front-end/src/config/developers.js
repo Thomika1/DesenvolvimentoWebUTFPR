@@ -5,6 +5,11 @@
 
 export const developers = [
   {
+    name: 'Guilherme',
+    github: '4lvves',
+    email: 'guilhermesilva.2022@alunos.utfpr.edu.br'
+  },
+  {
     name: 'Murilo',
     github: 'murilo-fmuniz',
     email: 'murilo.2022@alunos.utfpr.edu.br'
@@ -14,10 +19,4 @@ export const developers = [
     github: 'Thomika1',
     email: 'thomazbonfim@alunos.utfpr.edu.br'
   }
-  // Adicione mais desenvolvedores aqui seguindo o padrão:
-  // {
-  //   name: 'Nome do Aluno',
-  //   github: 'username-github',
-  //   email: 'email@alunos.utfpr.edu.br'
-  // }
 ];

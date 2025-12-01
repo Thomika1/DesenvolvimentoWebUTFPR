@@ -45,6 +45,12 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     return {"access_token": access_token, "token_type": "bearer"}
 
 
+# Alias para compatibilidade com frontend
+@router.post("/token", response_model=schemas.Token)
+def token_endpoint(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    return login_for_access_token(form_data, db)
+
+
 @router.get("/me", response_model=schemas.UserOut)
 def read_me(current_user=Depends(get_current_user)):
     return current_user

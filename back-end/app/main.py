@@ -8,9 +8,15 @@ from .rag_simples import initialize_rag
 app = FastAPI(title="Chatbot API with Auth")
 
 # Allow requests from the frontend (adjust in production)
+cors_origins = os.getenv("CORS_ORIGINS", "*")
+if cors_origins == "*":
+    allow_origins = ["*"]
+else:
+    allow_origins = [origin.strip() for origin in cors_origins.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("CORS_ORIGINS", "*").split(",")],
+    allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
