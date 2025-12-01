@@ -1,59 +1,73 @@
-import React, { useState } from 'react';
-import ChatMessages from './ChatMessages';
-import ChatInput from './ChatInput';
-import { useTheme } from '../ThemeContext';
-import { sendChatMessage } from '../api';
+import { useState } from 'react';
+import { useImmer } from 'use-immer';
 
-const Chatbot = () => {
-  const [messages, setMessages] = useState([
-    { sender: 'bot', text: 'Olá! Bem-vindo ao Guia UTFPR Apucarana! 🎓 Estou aqui para ajudar com informações sobre o vestibular e campus. O que você gostaria de saber?' }
-  ]);
-  const [loading, setLoading] = useState(false);
-  const { theme } = useTheme();
+import ChatMessages from '@/components/ChatMessages';
+import ChatInput from '@/components/ChatInput';
 
-  const handleSendMessage = async (userInput) => {
-    const userMessage = { sender: 'user', text: userInput };
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
-    setLoading(true);
+function Chatbot() {
+  const [chatId, setChatId] = useState(null);
+  const [messages, setMessages] = useImmer([]); // [1] useImmer é ótimo para isso!
+  const [newMessage, setNewMessage] = useState('');
 
-    try {
-      const response = await sendChatMessage(userInput);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { sender: 'bot', text: response.reply },
-      ]);
-    } catch (error) {
-      console.error("Erro ao buscar resposta do bot:", error);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { sender: 'bot', text: "Desculpe, algo deu errado: " + error.message },
-      ]);
-    } finally {
-      setLoading(false);
-    }
+  const isLoading = messages.length && messages[messages.length - 1].loading;
+
+  // --- NOVA FUNÇÃO DE SUBMISSÃO ---
+  const submitNewMessage = () => {
+    if (!newMessage.trim() || isLoading) return;
+
+    // 1. Adiciona a mensagem do usuário (imutabilidade com Immer)
+    setMessages(draft => {
+      draft.push({
+        role: 'user',
+        content: newMessage.trim(),
+        loading: false,
+        error: false,
+      });
+    });
+
+    // 2. Limpa o input
+    setNewMessage('');
+
+    // 3. Simula a resposta da IA com um pequeno atraso
+    setTimeout(() => {
+      const mockResponse = "🤖 Olá! Esta é uma resposta mockada da IA. O envio foi um sucesso!";
+
+      // Adiciona a resposta do bot após o atraso
+      setMessages(draft => {
+        draft.push({
+          role: 'assistant',
+          content: mockResponse,
+          loading: false,
+          error: false,
+        });
+      });
+    }, 1000); // 1 segundo de atraso
   };
 
-  const bgClass =
-    theme === 'dark'
-      ? 'bg-[#232324]'
-      : 'bg-white';
+
+
 
   return (
-    <div className={`flex flex-col w-full h-full overflow-hidden transition-all ${bgClass}`}>
-      {/* Chat Messages Area - Takes all available space */}
-      <div className="flex-1 overflow-y-auto w-full">
-        <ChatMessages messages={messages} loading={loading} theme={theme} />
-      </div>
-      
-      {/* Chat Input Area - Fixed at bottom */}
-      <div className={`flex-shrink-0 border-t px-4 sm:px-6 py-2 sm:py-3 ${theme === 'dark' ? 'border-gray-700 bg-[#1A1B1C]' : 'border-gray-200 bg-white'}`}>
-        <div className="w-full max-w-2xl mx-auto">
-          <ChatInput onSendMessage={handleSendMessage} theme={theme} />
+    <div className='relative grow flex flex-col gap-6 pt-6'>
+      {messages.length === 0 && (
+        <div className='mt-3 font-urbanist text-primary-blue text-xl font-light space-y-2'>
+          <p>👋 Welcome!</p>
+          <p>I am powered by the latest technology reports from leading institutions like the World Bank, the World Economic Forum, McKinsey, Deloitte and the OECD.</p>
+          <p>Ask me anything about the latest technology trends.</p>
         </div>
-      </div>
+      )}
+      <ChatMessages
+        messages={messages}
+        isLoading={isLoading}
+      />
+      <ChatInput
+        newMessage={newMessage}
+        isLoading={isLoading}
+        setNewMessage={setNewMessage}
+        submitNewMessage={submitNewMessage}
+      />
     </div>
   );
-};
+}
 
 export default Chatbot;
